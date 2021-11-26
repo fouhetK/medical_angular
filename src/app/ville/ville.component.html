@@ -1,0 +1,107 @@
+<main class="container">
+    
+    <div class="alert alert-success" *ngIf="success">Opération effetuée avec succès</div>
+
+    <h1>Liste des villes</h1>
+
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+        (click)="resetCity()">Ajouter une ville</button>
+
+    <div class="row my-4">
+        <div class="col-4">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="search" placeholder="Rechercher"
+                    aria-describedby="button-addon2" [(ngModel)]="search">
+                <button class="btn btn-outline-secondary" type="submit" id="button-addon2"><i class="fa fa-search"
+                        aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="col-4">
+            <button type="submit" class="btn btn-primary" (click)="reloadCities()">Rechercher</button>
+        </div>
+    </div>
+
+    <div class="form-line mb-4">
+        <label class="form-label">Recherche : </label>
+        <input class="form-control" type="text" id="search_input" name="search" placeholder="nom de ville">
+    </div>
+
+    
+    <div class="alert alert-success" *ngIf="villes.length == 0">Aucune ville trouvée</div>
+
+    <table class="table table-striped" *ngIf="villes.length > 0">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Code Postal</th>
+                <th>Pays</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let ville of villes" class="ville">
+                <td>{{ville.id}}</td>
+                <td>{{ville.nom}}</td>
+                <td>{{ville.codePostal}}</td>
+                <td>{{ville.paysByPaysCode.nom}}</td>
+                <td>
+                    <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                        (click)="edit(ville.id)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                    <button class="btn btn-danger btn-sm" (click)="delete(ville.id)"><i class="fa fa-trash-o"
+                            aria-hidden="true"></i></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</main>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel" *ngIf="ville.id == 0">Ajouter une ville</h5>
+                <h5 class="modal-title" id="staticBackdropLabel" *ngIf="ville.id != 0">Editer une ville</h5>
+                <button type="button" #closebutton class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <form ngNativeValidate (submit)="addVille()">
+                <div class="modal-body">
+
+                    <div class="alert alert-danger" *ngIf="errorMessage.length > 0">
+                        {{errorMessage}}
+                    </div>
+
+                    <div class="form-line mb-4">
+                        <label class="form-label">Nom *</label>
+                        <input class="form-control" type="text" name="nom" required placeholder="Votre nom"
+                            [(ngModel)]="ville.nom">
+                    </div>
+
+                    <div class="form-line mb-4">
+                        <label>Code Postal *</label>
+                        <input class="form-control" type="text" name="code_postal" required placeholder="Code Postal"
+                            [(ngModel)]="ville.codePostal">
+                    </div>
+
+                    <div class="form-line mb-4">
+                        <label class="form-label">Pays *</label>
+                        <div id="cities-content">
+                            <select class="form-select" name="pays" required id="pays"
+                                [(ngModel)]="ville.paysByPaysCode">
+                                <option *ngFor="let pays of listPays" [ngValue]="pays">{{pays.nom}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Valider</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
